@@ -1,0 +1,83 @@
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000000a1;
+	z-index: 3;
+}
+
+.form-container {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, calc(-50% + 5px));
+	z-index: 3;
+	background-color: #fff;
+	padding: 2rem;
+	border-radius: 1rem;
+	width: 50rem;
+	font-size: 1.6rem;
+}
+
+@media (max-width: 767px) {
+	.form-container {
+		max-width: 95%;
+	}
+}
+
+.form-container h1 {
+	margin-bottom: 3.5rem;
+}
+
+.form-container form {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+.form-container input {
+	padding: .5rem;
+	margin-top: .5rem;
+	border: 1px #ccc solid;
+	border-radius: 10px;
+
+	/* position: absolute; */
+	right: 0;
+	padding: 1rem;
+	margin: 1rem 0;
+}
+
+.form-container button {
+	padding: 1rem;
+	margin-top: 1rem;
+	background-image: var(--background-image);
+	border-radius: 10px;
+	color: #fff;
+	cursor: pointer;
+}
+
+select {
+	border: 1px #ccc solid;
+	border-radius: 10px;
+	padding: 1rem;
+	margin: 1rem 0;
+}
+
+.my-dropdown option {
+	/* Styles for the dropdown options */
+	background-color: white;
+	color: #333;
+	font-size: 16px;
+}
+
+.my-dropdown option:hover {
+	/* Styles for the hovered option */
+	background-color: #f2f2f2;
+}
+
+.my-dropdown option:checked {
+	/* Styles for the selected option */
+	background-color: #e9e9e9;
+}
