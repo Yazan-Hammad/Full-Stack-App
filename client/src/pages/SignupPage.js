@@ -1,34 +1,37 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "../css/Login.css";
-import useNavigation from "../hooks/use-navigation";
-import useBackend from "../hooks/use-backend";
-import SignupContent from "../components/SignupPage/SignupContent";
+import React, { useState } from 'react';
+import axios from 'axios';
+import '../css/Login.css';
+import useNavigation from '../hooks/use-navigation';
+import useBackend from '../hooks/use-backend';
+import SignupContent from '../components/SignupPage/SignupContent';
 
 function Signup() {
   const { makeRequest } = useBackend();
   const { navigate } = useNavigation();
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  });
 
   async function submit(e) {
+    const { name, email, password, passwordConfirm } = formData;
+    
     e.preventDefault();
 
     makeRequest(
-      "post",
-      "http://127.0.0.1:5000/api/v1/users/signup",
-      "Created Successfully",
+      'post',
+      'http://127.0.0.1:5000/api/v1/users/signup',
+      'Created Successfully',
       {
-        name: name,
-        email: email,
-        password: password,
-        passwordConfirm: passwordConfirm,
+        name,
+        email,
+        password,
+        passwordConfirm,
       },
       {},
-      () => navigate("/")
+      () => navigate('/')
     );
   }
 
@@ -36,10 +39,8 @@ function Signup() {
     <div className="signup-landing">
       <div className="container">
         <SignupContent
-          setName={setName}
-          setEmail={setEmail}
-          setPassword={setPassword}
-          setPasswordConfirm={setPasswordConfirm}
+          formData={formData}
+          setFormData={setFormData}
           submit={submit}
         />
       </div>

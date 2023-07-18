@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+
 import "react-toastify/dist/ReactToastify.css";
 
 import Router from "./components/Router";
@@ -16,10 +17,6 @@ import { CoursesProvider } from "./contexts/courses";
 import { BackendProvider } from "./contexts/backend";
 
 function App() {
-  const [token, setToken] = useState("");
-
-  const notify = () => toast("Wow so easy!");
-
   return (
     <>
       <BackendProvider>
@@ -29,7 +26,7 @@ function App() {
         <Router path="/login">
           <LoginPage />
         </Router>
-        <Router path="/forgotpassword">
+         <Router path="/forgotpassword">
           <ForgotPasswordPage />
         </Router>
         <Router path="/resetpassword">
@@ -43,7 +40,7 @@ function App() {
         </Router>
         <Router path="/profile">
           <Header />
-          <ProfilePage token={token} />
+          <ProfilePage/>
         </Router>
       </BackendProvider>
     </>

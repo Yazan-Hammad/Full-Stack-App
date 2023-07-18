@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import InputTextField from "../../InputTextField";
 import InputDropDownList from "../../InputDropDownList";
 import useCourses from "../../../hooks/use-courses";
+import {
+  handleChange,
+  handleFocus,
+  handleBlur,
+} from '../../Form/formHelpers';
+import DynamicForm from '../../Form/DynamicForm';
+
 
 function CourseFormContent({
   formData,
@@ -10,17 +17,102 @@ function CourseFormContent({
 }) {
   const { handleFormOpening } = useCourses();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]:
-        name === "image" || name === "book" || name === "videos"
-          ? value
-          : // ? prevFormData[name]
-            value,
-    }));
+  const [focusedFields, setFocusedFields] = useState({
+    name: false,
+    id: false,
+    department: false,
+    image: false,
+    book: false,
+    videos: false,
+  });
+
+  const onChange = handleChange(setFormData);
+  const onFocus = handleFocus(setFocusedFields);
+  const onBlur = handleBlur(setFocusedFields);
+
+  const embeddedFunctions = {
+    onChange,
+    onFocus,
+    onBlur,
   };
+
+  const formFields = [
+    {
+      inputType: 'textField',
+      className: focusedFields.name? 'focused': '',
+      title: 'name',
+      embeddedProps: {
+        value: formData.name,
+        ...embeddedFunctions,
+      },
+    },
+    {
+      inputType: 'textField',
+      className: focusedFields.id? 'focused': '',
+      title: 'ID',
+      name: 'id',
+      embeddedProps: {
+        value: formData.id,
+        ...embeddedFunctions,
+      },
+    },
+    {
+      inputType: 'radio',
+      radioTitle: 'department',
+      name: 'department',
+      options: [
+        {
+          id: 'cs',
+          title: 'CS',
+        },
+        {
+          id: 'sw',
+          title: 'SW',
+        },
+        {
+          id: 'cis',
+          title: 'CIS',
+        },
+        {
+          id: 'bit',
+          title: 'BIT',
+        },
+      ],
+      embeddedProps: {
+        value: formData.department,
+        ...embeddedFunctions,
+        // onChange: onRadioChange,
+      },
+    },
+    {
+      inputType: 'textField',
+      className: focusedFields.image? 'focused': '',
+      title: 'image',
+      embeddedProps: {
+        value: formData.image,
+        ...embeddedFunctions,
+      },
+    },
+    {
+      inputType: 'textField',
+      className: focusedFields.book? 'focused': '',
+      title: 'book',
+      embeddedProps: {
+        value: formData.book,
+        ...embeddedFunctions,
+      },
+    },
+    {
+      inputType: 'textField',
+      className: focusedFields.videos? 'focused': '',
+      title: 'videos',
+      embeddedProps: {
+        value: formData.videos,
+        ...embeddedFunctions,
+      },
+    },
+  ];  
+
   const handlePaste = function (event) {
     event.preventDefault();
     const pastedText = event.clipboardData.getData("text/plain");
@@ -29,58 +121,17 @@ function CourseFormContent({
       image: pastedText,
     }));
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Perform form submission or further processing with the formData
     handleFormOpening(false); // Close the overlay after form submission
   };
+
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <InputTextField
-          label={"Course Name:"}
-          value={formData.name}
-          onChange={handleChange}
-          name="name"
-        />
-        <InputTextField
-          label={"ID:"}
-          value={formData.id}
-          onChange={handleChange}
-          name="id"
-        />
-        <InputDropDownList
-          label={"Department:"}
-          defaultValue={"Select a value"}
-          values={["CS", "SW", "CIS", "BIT"]}
-          value={formData.department}
-          onChange={handleChange}
-          name="department"
-        />
-        <InputTextField
-          label={"Image: [paste the link]: "}
-          value={formData.image}
-          onChange={handleChange}
-          name="image"
-        />
-        <InputTextField
-          label={"Book: [paste the link]: "}
-          value={formData.book}
-          onChange={handleChange}
-          name="book"
-        />
-        <InputTextField
-          label={"Videos: [paste the link]: "}
-          value={formData.videos}
-          onChange={handleChange}
-          name="videos"
-        />
-        <InputTextField
-          label={"Notebook: [paste the link]: "}
-          value={formData.notebook}
-          onChange={handleChange}
-          name="Notebook"
-        />
+        <DynamicForm formFields ={formFields}/>
         <input
           type="submit"
           onClick={(e) => {

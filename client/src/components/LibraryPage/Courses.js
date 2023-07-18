@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
-import Course from "./Course.js";
-import useCourses from "../../hooks/use-courses";
-import PopupFormPage from "../../pages/PopupFormPage.js";
-import CourseFormPage from "../../pages/CourseFormPage.js";
+import React, { useState, useEffect } from 'react';
+import Course from './Course.js';
+import useCourses from '../../hooks/use-courses';
+import PopupFormPage from '../../pages/PopupFormPage.js';
+import CourseFormPage from '../../pages/CourseFormPage.js';
 
 function Courses() {
-  const { isOpen, courses, sortFunction, sortBy } = useCourses();
+  const { courses, sortFunction, sortBy } = useCourses();
   courses.sort((a, b) => sortFunction(a, b, sortBy));
+
+  // const [editedCourse, setEiditedCourse] = useState(undefined);
+
+  const [formData, setFormData] = useState(undefined);
 
   const elements = courses.map(
     ({ _id, name, id, department, image, book, videos }) => {
@@ -20,6 +24,7 @@ function Courses() {
           image={image}
           book={book}
           videos={videos}
+          setEiditedCourse={setFormData}
         />
       );
     }
@@ -28,9 +33,13 @@ function Courses() {
   return (
     <div className="container">
       {elements}
-      {isOpen && (
-        <PopupFormPage>
-          <CourseFormPage />
+      {formData && (
+        <PopupFormPage setOpenForm={setFormData}>
+          <CourseFormPage
+            formData={formData}
+            setFormData={setFormData}
+            mode={'editing'}
+          />
         </PopupFormPage>
       )}
     </div>

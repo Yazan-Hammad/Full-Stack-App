@@ -1,72 +1,95 @@
-import React, { useState } from "react";
-import "../css/ResetPasswordPage.css";
-import useBackend from "../hooks/use-backend";
-import useNavigation from "../hooks/use-navigation";
-import InputTextField from "../components/InputTextField";
+import React, { useState } from 'react';
+import '../css/ResetPasswordPage.css';
+import useBackend from '../hooks/use-backend';
+import useNavigation from '../hooks/use-navigation';
+import {
+  handleBlur,
+  handleChange,
+  handleFocus,
+} from '../components/Form/formHelpers';
+import DynamicForm from '../components/Form/DynamicForm';
 
-function ChangePasswordPage({setSettingOption}) {
+function ChangePasswordPage({ formData, setFormData, setOpenForm }) {
   const { token, makeRequest } = useBackend();
   const { navigate } = useNavigation();
 
-  const [passwordCurrent, setpasswordCurrent] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [focusedFields, setFocusedFields] = useState({
+    passwordCurrent: false,
+    password: false,
+    passwordConfirm: false,
+  });
 
-  // console.log(code);
-  // console.log(password);
-  // console.log(passwordConfirm);
+  const embeddedFunctions = {
+    onChange: handleChange(setFormData),
+    onFocus: handleFocus(setFocusedFields),
+    onBlur: handleBlur(setFocusedFields),
+  };
+
+  const formFields = [
+    {
+      inputType: 'textField',
+      name: 'passwordCurrent',
+      title: 'Password Current',
+      className: focusedFields.passwordCurrent ? 'focused' : '',
+      embeddedProps: {
+        value: formData.passwordCurrent,
+        ...embeddedFunctions,
+      },
+    },
+    {
+      inputType: 'textField',
+      name: 'password',
+      type: 'password',
+      title: 'Password',
+      className: focusedFields.password ? 'focused' : '',
+      embeddedProps: {
+        value: formData.password,
+        ...embeddedFunctions,
+      },
+    },
+    {
+      inputType: 'textField',
+      name: 'passwordConfirm',
+      type: 'password',
+      title: 'Password Confirm',
+      className: focusedFields.passwordConfirm ? 'focused' : '',
+      embeddedProps: {
+        value: formData.passwordConfirm,
+        ...embeddedFunctions,
+      },
+    },
+  ];
 
   const submitCode = (e) => {
     e.preventDefault();
 
+    const { passwordCurrent, password, passwordConfirm } = formData;
+
     makeRequest(
-      "patch",
+      'patch',
       `http://127.0.0.1:5000/api/v1/users/updateMyPassword`,
-      "The Password Changed Successfully",
+      'The Password Changed Successfully',
       { passwordCurrent, password, passwordConfirm },
       {
         Authorization: `Bearer ${token}`,
       },
       () => {
-        navigate("/login");
+        navigate('/login');
       }
     );
   };
 
   return (
-    <div className="form-div centered">
-      <form action="" method="post">
-        <InputTextField
-          label={"Enter the current password:"}
-          value={passwordCurrent}
-          onChange={(e) => setpasswordCurrent(e.target.value)}
-          name="current-password"
-        />
-
-        <InputTextField
-          label={"Enter the new Password:"}
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          placeholder="password"
-          name="new-password"
-        />
-
-        <InputTextField
-          label={"Re-Enter the new Password:"}
-          type="password"
-          onChange={(e) => setPasswordConfirm(e.target.value)}
-          value={passwordConfirm}
-          placeholder="confirm password"
-          name="confirm-new-password"
-        />
-        <div className="buttons">
-          <input type="submit" onClick={submitCode}/>
-          <button className="cancel" onClick={() => setSettingOption("")}>Cancel</button>
-        </div>
-      </form>
-    </div>
-  );
+    <form action="" method="post">
+      <DynamicForm formFields={formFields} />
+      <div className="buttons">
+        <button className="cancel" onClick={() => setOpenForm(false)}>
+          Cancel
+        </button>
+        <input type="submit" onClick={submitCode} />
+      </div>
+    </form>
+  );  
 }
 
 export default ChangePasswordPage;

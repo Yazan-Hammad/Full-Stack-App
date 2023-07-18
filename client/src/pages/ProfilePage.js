@@ -1,19 +1,42 @@
-import React, { useEffect, useState } from "react";
-import jwtDecode from "jwt-decode";
-import axios from "axios";
-import Swal from "sweetalert2";
+import React, { useEffect, useRef, useState } from 'react';
 
-import "../css/Profile.css";
-import useBackend from "../hooks/use-backend";
+import '../css/Profile.css';
+import useBackend from '../hooks/use-backend';
 
-import { GoGear } from "react-icons/go";
+import { GoGear } from 'react-icons/go';
 
-import ChangePasswordPage from "./ChangePasswordPage";
-import PopupFormPage from "./PopupFormPage";
+import PopupFormPage from './PopupFormPage';
+import ChangePasswordPage from './ChangePasswordPage';
 
 function Profile() {
   const [setting, setSetting] = useState(false);
-  const [settingOption, setSettingOption] = useState("");
+  const [openForm, setOpenForm] = useState(false);
+  const [formData, setFormData] = useState({
+    passwordCurrent: '',
+    password: '',
+    passwordConfirm: '',
+  });
+
+  const gearEl = useRef();
+
+  useEffect(() => {
+    const openSettingHandler = (event) => {
+      if (!gearEl.current?.contains(event.target)) {
+        setSetting((value) => false);
+      } else {
+        setSetting((value) => !value);
+        if(event.target.innerText?.toLowerCase() === 'change password') {
+          setOpenForm(() => true)
+        }
+      }
+    };
+
+    document.addEventListener('click', openSettingHandler, true);
+
+    return () => {
+      document.removeEventListener('click', openSettingHandler);
+    };
+  }, []);
 
   const { token, user } = useBackend();
 
@@ -26,14 +49,9 @@ function Profile() {
   const hasImage = false;
 
   const initials = name
-    ?.split(" ")
+    ?.split(' ')
     ?.map((name) => name[0])
-    ?.join("");
-
-  const handleClick = () => {
-    setSettingOption("changePassword");
-    setSetting((value) => false);
-  };
+    ?.join('');
 
   return (
     <>
@@ -55,23 +73,28 @@ function Profile() {
             </h3>
             <p className="user-email">{email}</p>
           </div>
-          <GoGear
-            className={setting ? `active` : ""}
-            onClick={() => setSetting((value) => !value)}
-          />
           <div className="user-brief">
             <h2>Brief</h2>
             {brief}
           </div>
-          {setting && (
-            <ul className="settings">
-              <li onClick={handleClick}>Change Password</li>
-            </ul>
-          )}
+          <div ref={gearEl} className='setting-container'>
+            <GoGear className={setting ? `active` : ''}/>
+            {setting && (
+              <ul className="settings">
+                <li>Change Password</li>
+              </ul>
+            )}
+          </div>
         </div>
       </div>
-      {settingOption === "changePassword" && (
-        <ChangePasswordPage setSettingOption={setSettingOption} />
+      {openForm && (
+        <PopupFormPage setOpenForm={setOpenForm}>
+          <ChangePasswordPage
+            formData={formData}
+            setFormData={setFormData}
+            setOpenForm={setOpenForm}
+          />
+        </PopupFormPage>
       )}
     </>
   );

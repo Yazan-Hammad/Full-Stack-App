@@ -45,9 +45,12 @@ const courseSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A course must have a department'],
     trim: true,
-    enum: {
-      values: ['CS', 'SW', 'CIS', 'BIT'],
-      message: 'Difficulty is either: easy, CS, SW, CIS, or BIT',
+    validate: {
+      validator: function (value) {
+        const validValues = ['cs', 'sw', 'cis', 'bit'];
+        return validValues.includes(value.toLowerCase());
+      },
+      message: 'Departments is either: CS, SW, CIS, or BIT',
     },
   },
   image: {

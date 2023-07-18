@@ -16,10 +16,37 @@
 }
 
 .profile .container {
-	position: relative;
-	display: flex;
-	gap: 5rem;
-	font-size: 1.9rem;
+	display: grid;
+	grid-gap: 5rem;
+	font-size: 1.6rem;
+}
+
+@media (min-width: 768px) {
+	.profile .container {
+		grid-template-columns: 1fr 2fr 2rem;
+	}
+}
+
+@media (max-width: 767px) {
+	.basic-info {
+		order: 1;
+	}
+	.setting-container {
+		order: 2;
+	}
+	.user-brief {
+		order: 3;
+	}
+	.profile .container {
+		grid-template-columns: 1fr 2rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.profile .container {
+		grid-template-columns: 1fr 2rem;
+		grid-gap: 2rem;
+	}
 }
 
 .image-alternative,
@@ -47,21 +74,23 @@
 }
 
 .user-email {
-font-size: 1.6remp;
+	font-size: 1.6remp;
 }
 
 .user-brief {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	line-height: 1.5;
 	text-align: left;
-	padding: 120px 20px 0 0;
 }
 
-.user-brief h2{
+.user-brief h2 {
 	margin-bottom: 1.5rem;
 	position: relative;
 }
 
-.user-brief h2::after{
+.user-brief h2::after {
 	content: "";
 	position: absolute;
 	left: 0;
@@ -71,11 +100,11 @@ font-size: 1.6remp;
 	background-color: #ccc;
 }
 
-.profile .container svg {
-	position: absolute;
-	right: 5px;
-	top: 0;
+.setting-container {
+	position: relative;
+}
 
+.profile .container svg {
 	font-size: 20px;
 
 	transition: transform 0.3s;
@@ -117,5 +146,5 @@ font-size: 1.6remp;
 }
 
 .profile .container .settings *:hover {
-	color: var(--color);
+	color: blue;
 }

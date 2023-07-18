@@ -71,41 +71,6 @@
 	border-radius: var(--border-radius);
 }
 
-.signup-section form,
-.login-section form {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-	display: block;
-	width: 100%;
-	padding: 10px;
-	margin-bottom: 2rem;
-	border-radius: var(--border-radius);
-	border: 1px solid #ccc;
-	font-size: 1.6rem;
-}
-
-.signup-section a,
-.login-section a:not(:last-child),
-input[type="submit"] {
-	display: block;
-	width: 100%;
-	background-color: #228e9e;
-	background-image: var(--background-image);
-	color: white;
-	padding: 1rem 2rem;
-	border: none;
-	border-radius: var(--border-radius);
-	font-size: 1.6rem;
-	cursor: pointer;
-	margin: 2rem auto 0;
-}
-
 .login-section a:last-child {
 	display: block;
 	text-align: center;
@@ -180,6 +145,7 @@ button.register {
 
 /* Medium */
 @media (max-width: 992px) {
+
 	.signup-landing .content,
 	.login-landing .content {
 		text-align: center;

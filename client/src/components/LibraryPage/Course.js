@@ -1,22 +1,31 @@
-import React, { useEffect, useState, useRef } from "react";
-import "../../css/Course.css";
-import { FaEllipsisH } from "react-icons/fa";
-import PopupFormPage from "../../pages/PopupFormPage";
-import CourseFormPage from "../../pages/CourseFormPage";
-import useCourses from "../../hooks/use-courses";
-import Swal from "sweetalert2";
+import React, { useEffect, useState, useRef } from 'react';
+import '../../css/Course.css';
+import { FaEllipsisH } from 'react-icons/fa';
+import PopupFormPage from '../../pages/PopupFormPage';
+import CourseFormPage from '../../pages/CourseFormPage';
+import useCourses from '../../hooks/use-courses';
+import Swal from 'sweetalert2';
+import useBackend from '../../hooks/use-backend';
 
-function Course({ _id, image, name, id, department, book, videos }) {
+function Course({
+  image,
+  name,
+  id,
+  department,
+  book,
+  videos,
+  setEiditedCourse,
+}) {
   //  Hooks
-  const [opened, setOpened] = useState(false);
+  const [openedCard, setOpenedCard] = useState(false);
   const [openOption, setOpenOption] = useState(false);
 
   const [highlight, setHighlight] = useState(true);
 
   const divEl = useRef();
 
-  const { deleteCourseByName, handleFormOpening, setExistedCourse } =
-    useCourses();
+  const { deleteCourseByName } = useCourses();
+  const { user, notifyError } = useBackend();
 
   useEffect(() => {
     //  Hilighting
@@ -29,74 +38,51 @@ function Course({ _id, image, name, id, department, book, videos }) {
       if (!divEl.current?.contains(event.target)) {
         setOpenOption((value) => false);
       } else {
+        if (!user) return notifyError('Please Login');
         setOpenOption((value) => !value);
       }
     };
 
-    document.addEventListener("click", openOptionHandler, true);
+    document.addEventListener('click', openOptionHandler, true);
 
     return () => {
       clearTimeout(timeout);
-      document.removeEventListener("click", openOptionHandler);
+      document.removeEventListener('click', openOptionHandler);
     };
   }, []);
 
   const handleClick = (event) => {
     const tag = event.target.tagName.toLowerCase();
-    const exclude = ["a", "svg", "path", "li", "ul"];
+    const exclude = ['a', 'svg', 'path', 'li', 'ul'];
 
     if (!exclude.includes(tag)) {
-      setOpened((opened) => !opened);
+      setOpenedCard((openedCard) => !openedCard);
     }
   };
 
-  // const handleEditing = async () => {
-  //   const { value: formValues } = await Swal.fire({
-  //     title: "Multiple inputs",
-  //     html: `<select id="key">
-  //             <option value="name">Name</option>
-  //             <option value="id">ID</option>
-  //             <option value="department">Department</option>
-  //             <option value="image-link">Image Link</option>
-  //             <option value="book-link">Book Link</option>
-  //             <option value="videos-link">Videos Link</option>
-  //           </select>
-  //           <input id="value" class="swal2-input">`,
-  //     focusConfirm: true,
-  //     preConfirm: () => {
-  //       return [
-  //         document.getElementById("key").value,
-  //         document.getElementById("value").value,
-  //       ];
-  //     },
-  //   });
-
-  //   if (formValues) {
-  //     Swal.fire(JSON.stringify(formValues));
-  //   }
-  // };
-
   const handleEditing = () => {
-    setExistedCourse({ image, name, id, department, book, videos });
-    handleFormOpening(true);
+    setEiditedCourse({
+      image,
+      name,
+      id,
+      department: department.toLowerCase(),
+      book,
+      videos,
+    });
   };
 
   return (
     <div
-      className={`course ${opened ? "active" : ""} ${
-        highlight ? "hilight" : ""
+      className={`course ${openedCard ? 'active' : ''} ${
+        highlight ? 'hilight' : ''
       }`}
       onClick={handleClick}
     >
       <div className="course-inner">
         <div className="course-front">
-          <div className={`option ${openOption ? "opened" : ""}`}>
+          <div className={`option ${openOption ? 'opened' : ''}`}>
             <div className="custom" ref={divEl}>
-              <FaEllipsisH
-                onClick={() => {
-                  // setOpenOption((value) => !value);
-                }}
-              />
+              <FaEllipsisH />
             </div>
             <ul>
               <li onClick={handleEditing}>Edit Course</li>
@@ -108,7 +94,7 @@ function Course({ _id, image, name, id, department, book, videos }) {
           </div>
           <h2>{name}</h2>
           <p className="department">
-            <span className="centered">{department}</span>
+            <span className="centered">{department.toUpperCase()}</span>
           </p>
           <p>🆔 {id}</p>
         </div>

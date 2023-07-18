@@ -1,12 +1,48 @@
-import Link from "../Link";
-import Logo from "../../images/logo.png";
-import { useState } from "react";
-import { GoEye, GoEyeClosed } from "react-icons/go";
-import InputTextField from "../InputTextField";
+import Link from '../Link';
+import Logo from '../../images/logo.png';
+import { useState } from 'react';
+import { GoEye, GoEyeClosed } from 'react-icons/go';
+import DynamicForm from '../Form/DynamicForm';
+import { handleFocus, handleBlur, handleChange } from '../Form/formHelpers';
 
-
-function LoginContent({ setEmail, setPassword, submit }) {
+function LoginContent({ formData, setFormData, submit }) {
   const [hiddenPassword, setHiddenPassword] = useState(true);
+
+  const [focusedFields, setFocusedFields] = useState({
+    email: false,
+    password: false,
+  });
+
+  const onFocus = handleFocus(setFocusedFields);
+  const onBlur = handleBlur(setFocusedFields);
+  const onChange = handleChange(setFormData);
+
+  const formFields = [
+    {
+      inputType: 'textField',
+      title: 'email',
+      type: 'email',
+      className: focusedFields.email ? 'focused' : '',
+      embeddedProps: {
+        value: formData.email,
+        onChange,
+        onFocus,
+        onBlur,
+      },
+    },
+    {
+      inputType: 'textField',
+      title: 'password',
+      type: 'password',
+      className: focusedFields.password ? 'focused' : '',
+      embeddedProps: {
+        value: formData.password,
+        onChange,
+        onFocus,
+        onBlur,
+      },
+    },
+  ];
 
   return (
     <>
@@ -19,23 +55,7 @@ function LoginContent({ setEmail, setPassword, submit }) {
       </div>
       <div className="login-section">
         <form action="" method="post">
-          <InputTextField
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            name="email"
-            placeholder="Email"
-          ></InputTextField>
-          <div className="password-field">
-            <InputTextField
-              type={hiddenPassword ? "password" : "text"}
-              onChange={(e) => setPassword(e.target.value)}
-              name="password"
-              placeholder="Password"
-            ></InputTextField>
-            <div className="eye" onClick={() => setHiddenPassword((value) => !value)}>
-              {hiddenPassword ? <GoEyeClosed /> : <GoEye />}
-            </div>
-          </div>
+          <DynamicForm formFields={formFields} />
           <input type="submit" onClick={submit}></input>
         </form>
         <Link to="/signup">Signup</Link>

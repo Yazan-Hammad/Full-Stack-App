@@ -7,7 +7,6 @@ const CoursesContext = createContext();
 function CoursesProvider({ children }) {
   //	Courses & ADFU
   const [courses, setCourses] = useState([]);
-  const [existedCourse, setExistedCourse] = useState(undefined);
 
   useEffect(() => {
     fetch("http://127.0.0.1:5000/api/v1/courses")
@@ -70,25 +69,25 @@ function CoursesProvider({ children }) {
     });
   };
 
-  const editCourse = (newCourse) => {
+  const editCourseByName = (oldCourse, newCourse) => {
     if (!token) {
       notifyError("Please Login");
       return null;
     }
 
     makeRequest(
-      "patch",
+      'patch',
       `http://127.0.0.1:5000/api/v1/courses/`,
-      "Course Successfully Edited",
-      { ...newCourse, currentName: existedCourse.name },
+      'Course Successfully Edited',
+      { ...newCourse, currentName: oldCourse.name },
       { Authorization: `Bearer ${token}` },
       () => {
         const newCourses = courses.map((course) =>
-          course.id === existedCourse.id ? newCourse : course
+          course.id === oldCourse.id ? newCourse : course
         );
         setCourses(newCourses);
 
-				handleFormOpening(false);
+        handleFormOpening(false);
       }
     );
   };
@@ -128,9 +127,7 @@ function CoursesProvider({ children }) {
         handleFormOpening,
         isOpen,
         createCourse,
-        editCourse,
-        existedCourse,
-        setExistedCourse,
+        editCourseByName,
       }}
     >
       {children}

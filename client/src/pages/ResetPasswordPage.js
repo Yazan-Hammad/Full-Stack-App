@@ -1,71 +1,104 @@
-import React, { useState } from "react";
-import "../css/ResetPasswordPage.css";
-import useBackend from "../hooks/use-backend";
-import useNavigation from "../hooks/use-navigation";
+import React, { useState } from 'react';
+import '../css/ResetPasswordPage.css';
+import useBackend from '../hooks/use-backend';
+import useNavigation from '../hooks/use-navigation';
+import {
+  handleFocus,
+  handleBlur,
+  handleChange,
+} from '../components/Form/formHelpers';
+import DynamicForm from '../components/Form/DynamicForm';
 
 function ResetPasswordPage() {
   const { makeRequest } = useBackend();
   const { navigate } = useNavigation();
 
-  const [code, setCode] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [formData, setFormData] = useState({
+    code: '',
+    password: '',
+    passwordConfirm: '',
+  });
+  const [focusedFields, setFocusedFields] = useState({
+    code: false,
+    password: false,
+    passwordConfirm: false,
+  });
 
-  console.log(code);
-  console.log(password);
-  console.log(passwordConfirm);
+  const onChange = handleChange(setFormData);
+  const onFocus = handleFocus(setFocusedFields);
+  const onBlur = handleBlur(setFocusedFields);
 
   const submitCode = (e) => {
     e.preventDefault();
 
+    const { code, password, passwordConfirm } = formData;
+
     makeRequest(
-      "patch",
+      'patch',
       `http://127.0.0.1:5000/api/v1/users/resetPassword/${code}`,
-      "The Password Changed Successfully",
-      { password, passwordConfirm},
+      'The Password Changed Successfully',
+      { password, passwordConfirm },
       {},
       () => {
-        navigate("/login");
+        navigate('/login');
       }
     );
   };
+
+  const formFields = [
+    {
+      inputType: 'textField',
+      title: 'code',
+      type: 'text',
+      className: focusedFields.code ? 'focused' : '',
+      autoComplete: 'new-password',
+      embeddedProps: {
+        value: formData.code,
+        onChange,
+        onFocus,
+        onBlur,
+      },
+    },
+    {
+      inputType: 'textField',
+      title: 'password',
+      type: 'password',
+      className: focusedFields.password ? 'focused' : '',
+      autoComplete: 'new-password',
+      embeddedProps: {
+        value: formData.password,
+        onChange,
+        onFocus,
+        onBlur,
+      },
+    },
+    {
+      inputType: 'textField',
+      title: 'password-confirm',
+      type: 'password',
+      autoComplete: 'new-password',
+      name: 'passwordConfirm',
+      className: focusedFields.passwordConfirm ? 'focused' : '',
+      embeddedProps: {
+        value: formData.passwordConfirm,
+        onChange,
+        onFocus,
+        onBlur,
+      },
+    },
+  ];
 
   return (
     <div className="reset-box">
       <h1>Find Your Account</h1>
 
       <form action="" method="post">
-        <p>Enter the code Here:</p>
-        <input
-          id="key"
-          value={code}
-          autoComplete="none"
-          type="text"
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Key: asdfewgrvthkjkkl65123sdfgsd"
-        />
-        <p>Enter the Password:</p>
-        <input
-          value={password}
-          autoComplete="none"
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-          name=""
-          placeholder="Password"
-        ></input>
-        <input
-          value={passwordConfirm}
-          autoComplete="none"
-          type="password"
-          onChange={(e) => setPasswordConfirm(e.target.value)}
-          name="confirm-password"
-          placeholder="Confirm_Password"
-        ></input>
+        <DynamicForm formFields={formFields} />
         <div className="buttons">
           <button
             id="cancel"
             onClick={() => {
-              navigate("/login");
+              navigate('/login');
             }}
           >
             Cancel
