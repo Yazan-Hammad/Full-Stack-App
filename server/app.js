@@ -77,13 +77,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
-app.use(
-  cors({
-    origin: 'http://localhost:3000', // Replace with the allowed origin(s) of your choice
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    optionsSuccessStatus: 200,
-  })
-);
+app.use(cors());
 
 //	1) Global Middlewares
 //  set security Http headers
